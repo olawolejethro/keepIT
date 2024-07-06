@@ -4,6 +4,7 @@
 const { Model } = require("sequelize");
 const { v4: uuidv4 } = require("uuid");
 const crypto = require("crypto");
+const bcrypt = require("bcryptjs");
 
 module.exports = (sequelize, DataTypes) => {
   class User extends Model {
@@ -105,7 +106,23 @@ module.exports = (sequelize, DataTypes) => {
       modelName: "User",
       tableName: "users",
     }
-  );
+  ),
+    {
+      hooks: {
+        beforeCreate: async (user) => {
+          if (user.password) {
+            const salt = await bcrypt.genSalt(10);
+            user.password = await bcrypt.hash(user.password, salt);
+          }
+        },
+        beforeUpdate: async (user) => {
+          if (user.password) {
+            const salt = await bcrypt.genSalt(10);
+            user.password = await bcrypt.hash(user.password, salt);
+          }
+        },
+      },
+    };
 
   // Here we associate which actually populates out pre-declared `association` static and other methods.
   // Addresses - one-to-many.
