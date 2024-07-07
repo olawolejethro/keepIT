@@ -1,6 +1,6 @@
 /** @format */
 const express = require("express");
-const db = require("../src/db/models/user");
+// const db = require("../src/db/models/user");
 const app = express();
 
 require("dotenv").config();
