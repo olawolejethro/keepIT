@@ -4,7 +4,7 @@ const app = require("./app");
 
 require("dotenv").config();
 
-const PORT = process.env.M_PORT;
+const PORT = process.env.M_PORT || 8000;
 
 // Test database connection
 try {
