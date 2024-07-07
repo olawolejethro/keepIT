@@ -1,11 +1,10 @@
 /** @format */
-const express = require("express");
+const app = require("./app");
 // const db = require("../src/db/models/user");
-const app = express();
 
 require("dotenv").config();
 
-const PORT = process.env.PORT || 8000;
+const PORT = process.env.M_PORT;
 
 // Test database connection
 try {

@@ -13,40 +13,30 @@ module.exports = (sequelize, DataTypes) => {
      * This method is not a part of Sequelize lifecycle.
      * The `models/index` file will call this method automatically.
      */
-    // static associate(models) {
-    //   // define association here
-    //   this.hasMany(models.Address, { foreignKey: "userId", as: "addresses" });
-    //   this.hasMany(models.Apartment, { as: "apartments" });
-    //   this.hasMany(models.ApartmentComment, {
-    //     foreignKey: "userId",
-    //     as: "apartmentComment",
-    //   });
-    //   this.hasMany(models.Hotel, {
-    //     foreignKey: "userId",
-    //     as: "hotels",
-    //   });
-    //   this.hasMany(models.RealEstate, {
-    //     foreignKey: "userId",
-    //     as: "realEstates",
-    //   });
-    //   this.hasMany(models.CoWorkingSpace, {
-    //     foreignKey: "userId",
-    //     as: "coworkingSpaces",
-    //   });
-    // }
+    static associate(models) {
+      // define association here
+      // this.hasMany(models.Address, { foreignKey: "userId", as: "addresses" });
+      // this.hasMany(models.Apartment, { as: "apartments" });
+      // this.hasMany(models.ApartmentComment, {
+      //   foreignKey: "userId",
+      //   as: "apartmentComment",
+      // });
+      // this.hasMany(models.Hotel, {
+      //   foreignKey: "userId",
+      //   as: "hotels",
+      // });
+      // this.hasMany(models.RealEstate, {
+      //   foreignKey: "userId",
+      //   as: "realEstates",
+      // });
+      // this.hasMany(models.CoWorkingSpace, {
+      //   foreignKey: "userId",
+      //   as: "coworkingSpaces",
+      // });
+    }
   }
   User.init(
     {
-      userId: {
-        type: DataTypes.STRING,
-        allowNull: false,
-        unique: true,
-        validate: {
-          notNull: {
-            msg: "User ID is required",
-          },
-        },
-      },
       firstName: {
         type: DataTypes.STRING,
         allowNull: false,
@@ -78,6 +68,17 @@ module.exports = (sequelize, DataTypes) => {
           },
         },
       },
+      userId: {
+        type: DataTypes.STRING,
+        allowNull: false,
+        unique: true,
+        defaultValue: () => uuidv4(),
+        validate: {
+          notNull: {
+            msg: "User ID is required",
+          },
+        },
+      },
       password: {
         type: DataTypes.STRING,
         allowNull: false,
@@ -96,15 +97,13 @@ module.exports = (sequelize, DataTypes) => {
           },
         },
       },
-      createdBy: DataTypes.STRING,
-      updatedBy: DataTypes.STRING,
     },
 
     {
       sequelize,
       timestamps: true,
       modelName: "User",
-      tableName: "users",
+      tableName: "Users",
     }
   ),
     {
