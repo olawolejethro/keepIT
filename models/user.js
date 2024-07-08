@@ -8,33 +8,17 @@ const bcrypt = require("bcryptjs");
 
 module.exports = (sequelize, DataTypes) => {
   class User extends Model {
-    /**
-     * Helper method for defining associations.
-     * This method is not a part of Sequelize lifecycle.
-     * The `models/index` file will call this method automatically.
-     */
     static associate(models) {
-      // define association here
-      // this.hasMany(models.Address, { foreignKey: "userId", as: "addresses" });
-      // this.hasMany(models.Apartment, { as: "apartments" });
-      // this.hasMany(models.ApartmentComment, {
-      //   foreignKey: "userId",
-      //   as: "apartmentComment",
-      // });
-      // this.hasMany(models.Hotel, {
-      //   foreignKey: "userId",
-      //   as: "hotels",
-      // });
-      // this.hasMany(models.RealEstate, {
-      //   foreignKey: "userId",
-      //   as: "realEstates",
-      // });
-      // this.hasMany(models.CoWorkingSpace, {
-      //   foreignKey: "userId",
-      //   as: "coworkingSpaces",
-      // });
+      // Many-to-many relationship with Organization
+      this.belongsToMany(models.Organization, {
+        through: "UserOrganizations",
+        foreignKey: "userId",
+        otherKey: "orgId",
+        // as: "organizations",
+      });
     }
   }
+
   User.init(
     {
       firstName: {
