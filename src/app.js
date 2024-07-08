@@ -28,18 +28,18 @@ app.post("/register", async (req, res) => {
         .json({ message: "Please provide all required fields" });
     }
     // Check if email already exists
-    // const existingUser = await User.findOne({ where: { email } });
-    // if (existingUser) {
-    //   return res.status(422).json({
-    //     errors: [
-    //       {
-    //         field: "email",
-    //         message: "Email already exists",
-    //       },
-    //     ],
-    //   });
-    // }
-    console.log("fee");
+    const existingUser = await User.findOne({ where: { email } });
+    if (existingUser) {
+      return res.status(422).json({
+        errors: [
+          {
+            field: "email",
+            message: "Email already exists",
+          },
+        ],
+      });
+    }
+    console.log("fee", password);
     // Create new user
     const newUser = await User.create({
       firstName,
@@ -48,6 +48,7 @@ app.post("/register", async (req, res) => {
       password,
       phone,
     });
+    console.log(newUser.password, "KING");
 
     // Respond with the created user
     return res.status(201).json(newUser);

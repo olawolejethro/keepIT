@@ -82,10 +82,19 @@ module.exports = (sequelize, DataTypes) => {
       password: {
         type: DataTypes.STRING,
         allowNull: false,
-        validate: {
-          notNull: {
-            msg: "Password is required",
-          },
+
+        set(value) {
+          // Encrypt password
+          this.setDataValue(
+            "salt",
+            Math.round(new Date().valueOf() * Math.random()) + ""
+          );
+          console.log("SALT IN HASHEDPASSWORD", this.getDataValue("salt"));
+          const password = crypto
+            .createHmac("sha1", this.getDataValue("salt"))
+            .update(value)
+            .digest("hex");
+          this.setDataValue("password", password);
         },
       },
       phone: {
@@ -104,9 +113,6 @@ module.exports = (sequelize, DataTypes) => {
       timestamps: true,
       modelName: "User",
       tableName: "Users",
-    }
-  ),
-    {
       hooks: {
         beforeCreate: async (user) => {
           if (user.password) {
@@ -121,7 +127,9 @@ module.exports = (sequelize, DataTypes) => {
           }
         },
       },
-    };
+    }
+  ),
+    {};
 
   // Here we associate which actually populates out pre-declared `association` static and other methods.
   // Addresses - one-to-many.
