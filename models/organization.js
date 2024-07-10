@@ -5,25 +5,30 @@ const { Model } = require("sequelize");
 const { v4: uuidv4 } = require("uuid");
 
 module.exports = (sequelize, DataTypes) => {
-  class Organization extends Model {
+  class Organisation extends Model {
     static associate(models) {
-      // Many-to-many relationship with User
       this.belongsToMany(models.User, {
-        through: "UserOrganizations",
+        through: models.UserOrganisations,
         foreignKey: "orgId",
         otherKey: "userId",
-        as: "Users",
+        as: "users",
+        onDelete: "CASCADE",
       });
     }
   }
 
-  Organization.init(
+  Organisation.init(
     {
       orgId: {
         type: DataTypes.STRING,
         allowNull: false,
         unique: true,
         defaultValue: uuidv4,
+        validate: {
+          notNull: {
+            msg: "Organisation ID is required",
+          },
+        },
       },
       name: {
         type: DataTypes.STRING,
@@ -40,10 +45,10 @@ module.exports = (sequelize, DataTypes) => {
     },
     {
       sequelize,
-      modelName: "Organization",
-      tableName: "Organizations",
+      modelName: "Organisation",
+      tableName: "Organisations",
     }
   );
 
-  return Organization;
+  return Organisation;
 };

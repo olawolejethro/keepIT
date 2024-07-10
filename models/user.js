@@ -3,24 +3,33 @@
 "use strict";
 const { Model } = require("sequelize");
 const { v4: uuidv4 } = require("uuid");
-const crypto = require("crypto");
-const bcrypt = require("bcryptjs");
 
 module.exports = (sequelize, DataTypes) => {
   class User extends Model {
     static associate(models) {
-      // Many-to-many relationship with Organization
-      this.belongsToMany(models.Organization, {
-        through: "UserOrganizations",
+      this.belongsToMany(models.Organisation, {
+        through: models.UserOrganisations,
         foreignKey: "userId",
         otherKey: "orgId",
-        // as: "organizations",
+        as: "organisations",
+        onDelete: "CASCADE",
       });
     }
   }
 
   User.init(
     {
+      userId: {
+        type: DataTypes.STRING,
+        allowNull: false,
+        unique: true,
+        defaultValue: uuidv4,
+        validate: {
+          notNull: {
+            msg: "User ID is required",
+          },
+        },
+      },
       firstName: {
         type: DataTypes.STRING,
         allowNull: false,
@@ -52,33 +61,13 @@ module.exports = (sequelize, DataTypes) => {
           },
         },
       },
-      userId: {
-        type: DataTypes.STRING,
-        allowNull: false,
-        unique: true,
-        defaultValue: () => uuidv4(),
-        validate: {
-          notNull: {
-            msg: "User ID is required",
-          },
-        },
-      },
       password: {
         type: DataTypes.STRING,
         allowNull: false,
-
-        set(value) {
-          // Encrypt password
-          this.setDataValue(
-            "salt",
-            Math.round(new Date().valueOf() * Math.random()) + ""
-          );
-          console.log("SALT IN HASHEDPASSWORD", this.getDataValue("salt"));
-          const password = crypto
-            .createHmac("sha1", this.getDataValue("salt"))
-            .update(value)
-            .digest("hex");
-          this.setDataValue("password", password);
+        validate: {
+          notNull: {
+            msg: "Password is required",
+          },
         },
       },
       phone: {
@@ -91,37 +80,13 @@ module.exports = (sequelize, DataTypes) => {
         },
       },
     },
-
     {
       sequelize,
       timestamps: true,
       modelName: "User",
       tableName: "Users",
-      hooks: {
-        beforeCreate: async (user) => {
-          if (user.password) {
-            const salt = await bcrypt.genSalt(10);
-            user.password = await bcrypt.hash(user.password, salt);
-          }
-        },
-        beforeUpdate: async (user) => {
-          if (user.password) {
-            const salt = await bcrypt.genSalt(10);
-            user.password = await bcrypt.hash(user.password, salt);
-          }
-        },
-      },
     }
-  ),
-    {};
-
-  // Here we associate which actually populates out pre-declared `association` static and other methods.
-  // Addresses - one-to-many.
-  // User.hasMany(Address, {
-  //   foreignKey: 'user_id', // this determines the name in `associations`!
-  //   as: 'addresses',
-  // });
-  // Address.belongsTo(User, { foreignKey: 'user_id' });
+  );
 
   return User;
 };

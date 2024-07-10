@@ -1,6 +1,5 @@
 /** @format */
 
-// models/userorganisations.js
 "use strict";
 
 module.exports = (sequelize, DataTypes) => {
@@ -17,11 +16,25 @@ module.exports = (sequelize, DataTypes) => {
       },
     },
     {
-      modelName: "UserOrganisation",
       tableName: "UserOrganisations",
       timestamps: false,
     }
   );
+
+  // Define the association with the Organisation and User models
+  UserOrganisations.associate = (models) => {
+    UserOrganisations.belongsTo(models.Organisation, {
+      foreignKey: "orgId",
+      as: "organisation",
+      onDelete: "CASCADE",
+    });
+
+    UserOrganisations.belongsTo(models.User, {
+      foreignKey: "userId",
+      as: "user",
+      onDelete: "CASCADE",
+    });
+  };
 
   return UserOrganisations;
 };
