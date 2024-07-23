@@ -3,7 +3,8 @@
 const express = require("express");
 const helmet = require("helmet");
 const authRoute = require("./routes/authRoute");
-const userRoute = require("./routes/userRoute");
+const getUserById = require("./routes/userRoute");
+const getAllOrganisation = require("./routes/userRoute");
 
 require("../db");
 
@@ -12,7 +13,8 @@ app.use(helmet());
 app.use(express.json());
 
 app.use("/", authRoute);
-app.use("/api/user", userRoute);
+app.use("/api/user", getUserById);
+app.use("/api/organisations", getAllOrganisation);
 
 // app.use("/api", Route);
 app.get("/", (req, res) => {

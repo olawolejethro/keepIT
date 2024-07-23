@@ -86,3 +86,36 @@ exports.getUserById = async function (req, res, next) {
     });
   }
 };
+
+exports.getAllOrganisation = async function (req, res, next) {
+  try {
+    const userId = req.user.id;
+
+    const organisations = await Organisation.findAll({
+      include: {
+        model: User,
+        as: "users",
+        where: { userId },
+        attributes: [], // We only want to include the organisations, not user details
+        through: {
+          attributes: [],
+        },
+      },
+    });
+
+    res.status(200).json({
+      status: "success",
+      message: "Organisations retrieved successfully",
+      data: {
+        organisations: organisations.map((org) => ({
+          orgId: org.orgId,
+          name: org.name,
+          description: org.description,
+        })),
+      },
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ message: "Internal Server Error" });
+  }
+};
